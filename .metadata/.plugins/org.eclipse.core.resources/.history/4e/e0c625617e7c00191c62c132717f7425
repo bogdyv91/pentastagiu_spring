@@ -1,0 +1,29 @@
+package com.pentalog.controller;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.ResponseStatus;
+import org.springframework.web.bind.annotation.RestController;
+import org.springframework.http.HttpStatus;
+
+import com.pentalog.converter.UserConverter;
+import com.pentalog.dto.UserDTO;
+import com.pentalog.model.User;
+import com.pentalog.service.UserService;
+
+@RestController("/user")
+public class UserController {
+
+	@Autowired
+	UserService userService;
+	
+	@Autowired
+	UserConverter userConverter;
+	
+	@PostMapping
+	@ResponseStatus(HttpStatus.CREATED)
+	public UserDTO createUser() {
+		return userConverter.convertToUserDTO(userService.getByUsernameAndPassword("bogdan", "ceva"));
+	}
+}

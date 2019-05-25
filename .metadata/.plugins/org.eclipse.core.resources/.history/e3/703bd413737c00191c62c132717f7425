@@ -1,0 +1,5 @@
+package com.utilities;
+
+public enum Type {
+	INCOMING, OUTGOING;
+}

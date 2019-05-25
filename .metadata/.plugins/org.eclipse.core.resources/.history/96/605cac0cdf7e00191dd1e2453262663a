@@ -1,0 +1,45 @@
+package com.pentalog.service;
+
+import java.util.List;
+import java.util.Optional;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import com.pentalog.model.Authentification;
+import com.pentalog.model.User;
+import com.pentalog.repository.AuthentificationRepository;
+import com.pentalog.utilities.TokenGenerator;
+
+@Service
+public class AuthentificationService {
+
+	@Autowired
+	AuthentificationRepository authentificationRepository;
+	
+	public void save(Authentification authentification) {
+		List<Authentification> authentifications = authentificationRepository.findByToken(authentification.getToken());
+		while(authentifications.size() != 0) {
+			authentification.setToken(TokenGenerator.getRandomToken());
+			authentifications = authentificationRepository.findByToken(authentification.getToken());
+		}
+		authentificationRepository.save(authentification);
+	}
+	
+	public boolean delete(String token) {
+		List<Authentification> authentifications = authentificationRepository.findByToken(token);
+		if(authentifications.size() == 1) {
+			authentificationRepository.delete(authentifications.get(0));
+			return true;
+		}
+		return false;
+	}
+	
+	public User getUserByToken(String token){
+		List<Authentification> authentifications = authentificationRepository.findByToken(token);
+		if(authentifications.size() == 1) {
+			return authentifications.get(0).getUser();
+		}
+		return null;
+	}
+}

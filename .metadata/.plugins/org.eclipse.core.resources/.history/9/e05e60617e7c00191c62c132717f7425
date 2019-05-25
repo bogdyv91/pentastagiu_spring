@@ -1,0 +1,20 @@
+package com.pentalog.service;
+
+import java.util.List;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import com.pentalog.model.User;
+import com.pentalog.repository.UserRepository;
+
+@Service
+public class UserService {
+	@Autowired
+	UserRepository userRepository;
+	
+	public User getByUsernameAndPassword(String username, String password) {
+		List<User> users=userRepository.findByUsernameAndPassword(username, password);
+		return users.get(0);
+	}
+}

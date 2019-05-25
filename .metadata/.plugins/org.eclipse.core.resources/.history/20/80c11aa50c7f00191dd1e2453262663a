@@ -1,0 +1,25 @@
+package com.pentalog.service;
+
+import java.util.List;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import com.pentalog.model.Account;
+import com.pentalog.model.Transaction;
+import com.pentalog.repository.TransactionRepository;
+
+@Service
+public class TransactionService {
+
+	@Autowired
+	TransactionRepository transactionRepository;
+
+	public void save(Transaction transaction) {
+		transactionRepository.save(transaction);
+	}
+
+	public List<Transaction> findByAccountId(Account account) {
+		return transactionRepository.findByAccountId(account);
+	}
+}

@@ -1,0 +1,57 @@
+package com.pentalog.controller;
+
+import javax.websocket.server.PathParam;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.ResponseStatus;
+import org.springframework.web.bind.annotation.RestController;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+
+import com.pentalog.converter.UserConverter;
+import com.pentalog.dto.UserDTO;
+import com.pentalog.model.Authentification;
+import com.pentalog.model.User;
+import com.pentalog.repository.AuthentificationRepository;
+import com.pentalog.service.UserService;
+import com.pentalog.utilities.TokenGenerator;
+
+@RestController("/user")
+public class UserController {
+
+	@Autowired
+	UserService userService;
+	
+	@Autowired
+	UserConverter userConverter;
+	
+	@Autowired
+	AuthentificationRepository authentificationRepository;
+	
+	@GetMapping("/{username}/password/{password}")
+	@ResponseBody
+	public ResponseEntity login(@PathVariable(value = "username")String username, @PathVariable(value = "password")String password) {
+		User user=userService.getByUsernameAndPassword(username, password).orElse(null);
+		if(user != null) {
+			authentificationRepository.save(new Authentification(TokenGenerator.getRandomToken(), user));
+			return ResponseEntity.status(HttpStatus.ACCEPTED).body(null);
+		}
+		else {
+			return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null);
+		}
+		
+	}
+	
+	@PostMapping
+	@ResponseStatus(HttpStatus.CREATED)
+	public UserDTO createUser() {
+		return userConverter.convertToUserDTO(userService.getByUsernameAndPassword("bogdan", "ceva").orElse(null));
+	}
+}

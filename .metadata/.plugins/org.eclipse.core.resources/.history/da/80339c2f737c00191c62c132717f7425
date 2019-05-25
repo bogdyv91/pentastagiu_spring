@@ -1,0 +1,92 @@
+package com.pentalog.utilities;
+
+import java.math.BigDecimal;
+
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
+import com.exceptions.ImpossibleToTransferException;
+import com.model.Account;
+
+/**
+ * This class contains functions that help validate an account.
+ * 
+ * @author Vacariuc Bogdan
+ *
+ */
+public class AccountValidations {
+	private final static Logger LOGGER = LogManager.getLogger(AccountValidations.class.getName());
+
+	/**
+	 * Checks if the specified account is correct.
+	 * 
+	 * @param accountNumber
+	 * @return
+	 */
+	public static boolean accountNumberValidation(String accountNumber) {
+		if (accountNumber.length() == Constants.ACCOUNT_NUMBER_LENGTH && accountNumber
+				.substring(Constants.ACCOUNT_INFORMATIONS_SUBSTRING_START,
+						Constants.ACCOUNT_INFORMATIONS_SUBSTRING_FINISH)
+				.equals(Constants.ACCOUNT_INFORMATIONS_SUBSTRING_STRING)) {
+			return true;
+		}
+		return false;
+	}
+
+	/**
+	 * Checks if the specified currency exists in the Currency enum
+	 * 
+	 * @see Currency
+	 * @param currency
+	 * @return
+	 */
+	public static boolean currencyValidation(String currency) {
+		if (currency.equals(Currency.RON.toString())) {
+			return true;
+		}
+		if (currency.equals(Currency.EUR.toString())) {
+			return true;
+		}
+		return false;
+	}
+
+	/**
+	 * Checks if the specified array has enough items inside and if the currency and
+	 * account number are valid.
+	 * 
+	 * @param account
+	 * @return
+	 */
+	public static boolean accountValidation(String[] account) {
+		if (account.length == Constants.ACCOUNT_INFORMATIONS_NUMBER && currencyValidation(account[3])
+				&& accountNumberValidation(account[0])) {
+			return true;
+		}
+		LOGGER.error("Incorrect line read from accounts");
+		return false;
+	}
+
+	/**
+	 * Checks if the amount is transferable from fromAccount to toAccount.
+	 * 
+	 * @param fromAccount
+	 * @param toAccount
+	 * @param amount
+	 * @return
+	 * @throws ImpossibleToTransferException
+	 */
+	public static boolean isTransferable(Account fromAccount, Account toAccount, BigDecimal amount)
+			throws ImpossibleToTransferException {
+		if (fromAccount.equals(toAccount))
+			throw new ImpossibleToTransferException("You can not transfer money in the same account");
+		if (fromAccount.getAccountType().compareTo(toAccount.getAccountType()) == 0) {
+			if (fromAccount.getBalance().compareTo(amount) >= 0) {
+				return true;
+			} else {
+				throw new ImpossibleToTransferException("Available balance is too small for this operation.");
+			}
+		} else {
+			throw new ImpossibleToTransferException("The accounts do not have the same currency.");
+		}
+	}
+}

@@ -1,0 +1,87 @@
+package com.pentalog.controller;
+
+import java.util.LinkedList;
+import java.util.List;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
+
+import com.pentalog.converter.TransactionConverter;
+import com.pentalog.dto.TransactionDTO;
+import com.pentalog.exceptions.ImpossibleToTransferException;
+import com.pentalog.model.Account;
+import com.pentalog.model.Transaction;
+import com.pentalog.model.User;
+import com.pentalog.service.AccountService;
+import com.pentalog.service.AuthentificationService;
+import com.pentalog.service.TransactionService;
+import com.pentalog.utilities.AccountValidations;
+import com.pentalog.utilities.Type;
+
+@RestController
+@RequestMapping("/transfer")
+public class TransferController {
+
+	@Autowired
+	TransactionService transactionService;
+
+	@Autowired
+	TransactionConverter transactionConverter;
+
+	@Autowired
+	AuthentificationService authentificationService;
+
+	@Autowired
+	AccountService accountService;
+
+	@GetMapping
+	public ResponseEntity<List<TransactionDTO>> showTransactions(@RequestParam(value = "token") String token) {
+		User user = authentificationService.getUserByToken(token).orElse(null);
+		if (user != null) {
+			List<Account> accounts = accountService.getAccounts(user);
+			// System.out.println(accounts.get(0).getBalance());
+			List<TransactionDTO> transactionsDTO = new LinkedList<>();
+			for (Account account : accounts) {
+				List<Transaction> transactions = transactionService.findByAccountId(account);
+				// System.out.println(accountDTO.getAccountNumber());
+				for (Transaction transaction : transactions) {
+					transactionsDTO.add(transactionConverter.convertToTransactionDTO(transaction));
+				}
+			}
+			new ResponseEntity<List<TransactionDTO>>(HttpStatus.ACCEPTED);
+			return ResponseEntity.ok(transactionsDTO);
+		}
+		return new ResponseEntity<List<TransactionDTO>>(HttpStatus.BAD_REQUEST);
+	}
+
+	@PutMapping
+	public ResponseEntity<?> makeTransaction(@RequestParam(value = "token") String token,
+			@RequestBody TransactionDTO transaction) {
+		try {
+		if (authentificationService.getUserByToken(token).isPresent()) {
+			Account accountFrom = accountService.getAccountByAccountNumber(transaction.getAccountFrom()).orElse(null);
+			Account accountTo = accountService.getAccountByAccountNumber(transaction.getAccountTo()).orElse(null);
+			if (AccountValidations.isTransferable(accountFrom, accountTo, transaction.getAmount())) {
+				accountFrom.setBalance(accountFrom.getBalance().subtract(transaction.getAmount()));
+				accountTo.setBalance(accountTo.getBalance().add(transaction.getAmount()));
+				accountService.save(accountFrom);
+				accountService.save(accountTo);
+				transactionService.save(new Transaction(transaction.getAccountTo(), transaction.getAmount(), transaction.getDetails(), Type.OUTGOING, accountFrom));
+				transactionService.save(new Transaction(transaction.getAccountFrom(), transaction.getAmount(), transaction.getDetails(), Type.INCOMING, accountTo));
+				return ResponseEntity.accepted().build();
+			}
+		}
+		}catch(ImpossibleToTransferException e) {
+			return ResponseEntity.badRequest().build();
+		}
+		return ResponseEntity.badRequest().build();
+	}
+
+}

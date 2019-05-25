@@ -1,0 +1,24 @@
+package com.pentalog.service;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import com.pentalog.model.Account;
+import com.pentalog.model.User;
+import com.pentalog.repository.AccountRepository;
+
+@Service
+public class AccountService {
+
+	@Autowired
+	AccountRepository accountRepository;
+	
+	public List<Account> getAccounts(User user){
+		List<Account> accounts= new ArrayList<Account>();
+		accounts=accountRepository.findByUser(user);
+		return accounts;
+	}
+}

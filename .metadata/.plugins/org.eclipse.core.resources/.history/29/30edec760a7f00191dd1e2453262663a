@@ -1,0 +1,19 @@
+package com.pentalog.converter;
+
+import org.springframework.stereotype.Component;
+
+import com.pentalog.dto.UserDTO;
+import com.pentalog.model.User;
+
+@Component
+public class UserConverter {
+
+	public User convertFromUserDTO(UserDTO userDto) {
+		return new User(userDto.getUsername(), userDto.getPassword());
+	}
+
+	public UserDTO convertToUserDTO(User user) {
+		return new UserDTO(user.getUsername(), user.getPassword());
+	}
+
+}

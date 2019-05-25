@@ -1,0 +1,16 @@
+package com.pentalog.repository;
+
+import java.util.List;
+
+import org.springframework.data.repository.Repository;
+import org.springframework.stereotype.Component;
+
+import com.pentalog.model.Transaction;
+
+@Component
+public interface TransactionRepository extends Repository<Transaction, Long>{
+
+	public List<Transaction> findByToken(String token);
+	
+	public void save(Transaction transaction);
+}

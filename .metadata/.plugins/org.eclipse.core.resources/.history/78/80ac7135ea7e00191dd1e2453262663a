@@ -1,0 +1,16 @@
+package com.pentalog.converter;
+
+import com.pentalog.dto.TransactionDTO;
+import com.pentalog.model.Transaction;
+
+public class TransactionConverter {
+
+	
+	public Transaction convertFromTransactionDTO(TransactionDTO transactionDto) {
+		return new Transaction(transactionDto.getAccountFrom(), transactionDto.getAmount(), transactionDto.getDetails(), transactionDto.getType());
+	}
+
+	public TransactionDTO convertToTransactionDTO(Transaction transaction) {
+		return new TransactionDTO(transaction.getAccount(), transaction.getAmount(), transaction.getDetails(), transaction.getType(), transaction.getAccountId().getAccountNumber());
+	}
+}

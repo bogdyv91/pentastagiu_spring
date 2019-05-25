@@ -1,0 +1,12 @@
+package com.pentalog.repository;
+
+import org.springframework.data.repository.Repository;
+import org.springframework.stereotype.Component;
+
+import com.pentalog.model.Authentification;
+
+@Component
+public interface AuthentificationRepository extends Repository<Authentification, Long>{
+
+	public Authentification save(Authentification authentification);
+}

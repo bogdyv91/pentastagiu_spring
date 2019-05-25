@@ -1,0 +1,60 @@
+package com.pentalog.controller;
+
+import java.util.List;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseStatus;
+import org.springframework.web.bind.annotation.RestController;
+import org.springframework.http.HttpStatus;
+import org.springframework.stereotype.Controller;
+
+import com.pentalog.converter.AccountConverter;
+import com.pentalog.dto.AccountDTO;
+import com.pentalog.model.Account;
+import com.pentalog.model.User;
+import com.pentalog.service.AccountService;
+import com.pentalog.service.AuthentificationService;
+
+@RestController
+@RequestMapping("/account")
+public class AccountController {
+
+	@Autowired
+	AccountService accountService;
+	
+	@Autowired
+	AccountConverter accountConverter;
+	
+	@Autowired
+	AuthentificationService authentificationService;
+	
+	/*@GetMapping
+	@ResponseStatus(HttpStatus.ACCEPTED)
+	public List<AccountDTO> showAccountsForUser(@RequestParam(value="token") String token) {
+		User user= authentificationService.getUserByToken(token).orElse(null);
+		if(user!=null) {
+			List<Account> accounts = accountService.getAccounts(user);
+		}
+		return null;
+		
+	}*/
+	
+	@PostMapping(produces = "application/json", consumes = "application/json")
+	public AccountDTO createAccount(@RequestParam(value="token") String token, @RequestBody AccountDTO accountDTO) {
+		//User user= authentificationService.getUserByToken(token).orElse(null);
+		//System.out.println(user.getUsername());
+		//if(user!=null) {
+			//Account account = new Account(accountDTO.getAccountNumber(), user, accountDTO.getBalance(), accountDTO.getAccountType());
+			//accountService.save(account);
+			//return accountConverter.convertToAccountDTO(account);
+		//}
+		return null;
+	}
+	
+	
+}

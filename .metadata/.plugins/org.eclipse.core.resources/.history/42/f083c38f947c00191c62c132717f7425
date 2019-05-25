@@ -1,0 +1,21 @@
+package com.pentalog.repository;
+
+import java.util.List;
+
+import org.springframework.data.repository.Repository;
+import org.springframework.stereotype.Component;
+
+import com.pentalog.model.Authentification;
+import com.pentalog.model.User;
+
+@Component
+public interface AuthentificationRepository extends Repository<Authentification, Long>{
+
+	public Authentification save(Authentification authentification);
+	
+	public void delete(Authentification authentification);
+	
+	public List<Authentification> findByToken(String token);
+	
+	public User getUserByToken(String token);
+}

@@ -1,0 +1,16 @@
+package com.pentalog.dto;
+
+import java.math.BigDecimal;
+
+import com.pentalog.utilities.Type;
+
+public class TransactionDTO {
+	
+	private String account;
+	
+	private BigDecimal amount;
+	
+	private String details;
+	
+	private Type type;
+}
