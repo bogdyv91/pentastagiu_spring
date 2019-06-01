@@ -1,0 +1,35 @@
+package com.pentalog.utilities.email;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.mail.SimpleMailMessage;
+import org.springframework.stereotype.Component;
+
+@Component
+public class EmailServiceImpl {
+
+	@Autowired
+	public JavaMailSender emailSender;
+
+	public void sendSimpleMessage(String to, String subject, String text) {
+		// ...
+		SimpleMailMessage message = new SimpleMailMessage();
+
+		msg.addHeader("Content-type", "text/HTML; charset=UTF-8");
+		msg.addHeader("format", "flowed");
+		msg.addHeader("Content-Transfer-Encoding", "8bit");
+
+		msg.setFrom(new InternetAddress("contact@webook.com", "NoReply-JD"));
+
+		msg.setReplyTo(InternetAddress.parse("contact@webook.com", false));
+
+		msg.setSubject(subject, "UTF-8");
+
+		msg.setText(body, "UTF-8");
+
+		msg.setSentDate(new Date());
+
+		emailSender.send(message);
+		// ...
+	}
+
+}

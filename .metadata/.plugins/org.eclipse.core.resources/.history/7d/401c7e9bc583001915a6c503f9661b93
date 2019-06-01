@@ -1,0 +1,12 @@
+spring:
+  datasource:
+    driverClassName: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://localhost:3306/pentastagiu?useSSL=false
+    username: username
+    password: password
+  jpa: 
+    database-platform: org.hibernate.dialect.MySQL5Dialect
+    hibernate:
+      ddlAuto: update
+server.port: 9092
+api.deleteTime: 20

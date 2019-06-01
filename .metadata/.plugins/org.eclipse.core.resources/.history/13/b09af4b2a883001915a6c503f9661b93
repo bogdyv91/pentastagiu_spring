@@ -1,0 +1,5 @@
+package com.pentalog.utilities.email;
+
+public class EmailServiceImpl {
+
+}

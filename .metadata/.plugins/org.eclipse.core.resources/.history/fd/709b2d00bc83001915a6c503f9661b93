@@ -1,0 +1,51 @@
+package com.pentalog.service;
+
+import java.time.LocalDateTime;
+import java.util.List;
+import java.util.Optional;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.scheduling.annotation.Scheduled;
+import org.springframework.stereotype.Service;
+
+import com.pentalog.model.Notification;
+import com.pentalog.model.Person;
+import com.pentalog.repository.NotificationRepository;
+import com.pentalog.repository.PersonRepository;
+import com.pentalog.utilities.email.EmailServiceImpl;
+import com.pentalog.utilities.enums.Status;
+
+@Service
+public class NotificationService {
+
+	@Autowired
+	NotificationRepository notificationRepsitory;
+
+	@Autowired
+	EmailServiceImpl emailServiceImpl;
+
+	@Autowired
+	PersonRepository personRepository;
+
+	@Scheduled(fixedDelay = 5000)
+	public void sendEmails() {
+		List<Notification> notifications = notificationRepsitory.findBy();
+		for (Notification notification : notifications) {
+			if (notification.getStatus() == Status.NOT_SENT) {
+				Optional<Person> person = personRepository.findPersonByUser(notification.getUser());
+				if (person.isPresent()) {
+					String message = "You have a new transaction on account "
+							+ notification.getTransaction().getAccount() + ", amount transferred is "
+							+ notification.getTransaction().getAmount() + " and the details of the transaction are "
+							+ notification.getTransaction().getDetails();
+
+					//emailServiceImpl.sendSimpleMessage(person.get().getEmail(), "New transaction", message);
+					notification.setSentTime(LocalDateTime.now());
+					notification.setStatus(Status.SENT);
+				}
+			}
+		}
+
+	}
+	
+}

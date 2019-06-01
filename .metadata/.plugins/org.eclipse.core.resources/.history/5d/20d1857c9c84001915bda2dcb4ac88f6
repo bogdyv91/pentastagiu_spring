@@ -1,0 +1,27 @@
+package com.pentalog;
+
+import org.junit.runner.RunWith;
+import org.mockito.Mock;
+import org.springframework.test.context.junit4.SpringRunner;
+
+import com.pentalog.converter.TransactionConverter;
+import com.pentalog.repository.NotificationRepository;
+import com.pentalog.repository.TransactionRepository;
+import com.pentalog.service.AccountService;
+
+@RunWith(SpringRunner.class)
+public class TransactionServiceTest {
+	
+	@Mock
+	AccountService accountService;
+
+	@Mock
+	TransactionRepository transactionRepository;
+
+	@Mock
+	TransactionConverter transactionConverter;
+
+	@Mock
+	NotificationRepository notificationRepository;
+
+}

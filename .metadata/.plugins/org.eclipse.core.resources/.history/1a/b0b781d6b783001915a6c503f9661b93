@@ -1,0 +1,33 @@
+package com.pentalog.service;
+
+import java.util.List;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.scheduling.annotation.Scheduled;
+import org.springframework.stereotype.Service;
+
+import com.pentalog.model.Notification;
+import com.pentalog.repository.NotificationRepository;
+import com.pentalog.utilities.email.EmailServiceImpl;
+import com.pentalog.utilities.enums.Status;
+
+@Service
+public class NotificationService {
+
+	@Autowired
+	NotificationRepository notificationRepsitory;
+	
+	@Autowired
+	EmailServiceImpl emailServiceImpl;
+	
+	@Scheduled(fixedDelay = 5000)
+	public void sendEmails() {
+		List<Notification> notifications = notificationRepsitory.findBy();
+		for(Notification notification : notifications) {
+			if(notification.getStatus() == Status.NOT_SENT) {
+				
+			}
+		}
+		
+	}
+}

@@ -1,0 +1,61 @@
+package com.pentalog.service;
+
+import java.util.List;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import com.pentalog.dto.TransactionDTO;
+import com.pentalog.model.Account;
+import com.pentalog.model.Transaction;
+import com.pentalog.repository.TransactionRepository;
+import com.pentalog.utilities.AccountValidations;
+import com.pentalog.utilities.enums.Type;
+
+/**
+ * Service class for operations with Transaction objects
+ * 
+ * @author Vacariuc Bogdan
+ *
+ */
+
+@Service
+public class TransactionService {
+
+	@Autowired
+	AccountService accountService;
+
+	@Autowired
+	TransactionRepository transactionRepository;
+
+	/**
+	 * Saves a transaction in the database
+	 * 
+	 * @param transaction the transaction that is saved
+	 */
+
+	public void makeNewTransaction(TransactionDTO transaction) {
+		Account accountFrom = accountService.getAccountByAccountNumber(transaction.getAccountFrom()).orElse(null);
+		Account accountTo = accountService.getAccountByAccountNumber(transaction.getAccountTo()).orElse(null);
+		if (AccountValidations.isTransferable(accountFrom, accountTo, transaction.getAmount())) {
+			accountFrom.setBalance(accountFrom.getBalance().subtract(transaction.getAmount()));
+			accountTo.setBalance(accountTo.getBalance().add(transaction.getAmount()));
+			accountService.save(accountFrom);
+			accountService.save(accountTo);
+			transactionRepository.save(new Transaction(transaction.getAccountTo(), transaction.getAmount(),
+					transaction.getDetails(), Type.OUTGOING, accountFrom));
+			transactionRepository.save(new Transaction(transaction.getAccountFrom(), transaction.getAmount(),
+					transaction.getDetails(), Type.INCOMING, accountTo));
+		}
+	}
+
+	/**
+	 * Gets a list of transactions for the specified account
+	 * 
+	 * @param account the account that transactions are searched by
+	 * @return List of transactions
+	 */
+	public List<Transaction> findByAccountId(Account account) {
+		return transactionRepository.findByAccountId(account);
+	}
+}

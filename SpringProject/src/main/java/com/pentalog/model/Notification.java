@@ -1,0 +1,110 @@
+package com.pentalog.model;
+
+import java.time.LocalDateTime;
+
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.OneToOne;
+import javax.persistence.Table;
+
+import com.pentalog.utilities.enums.Status;
+
+/**
+ * Model class for Notification.
+ * 
+ * @author Vacariuc Bogdan
+ *
+ */
+@Entity
+@Table(name = "notification")
+public class Notification {
+	@Id
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
+	@Column(name = "id")
+	private long id;
+
+	@ManyToOne
+	@JoinColumn(name = "user_id")
+	private User user;
+
+	@OneToOne
+	@JoinColumn(name = "transaction_id")
+	private Transaction transaction;
+
+	@Column(name = "created_time")
+	private LocalDateTime createdTime;
+
+	@Column(name = "sent_time")
+	private LocalDateTime sentTime;
+
+	@Column(name = "status")
+	private Status status;
+
+	public Notification() {
+
+	}
+
+	public Notification(User user, Transaction transaction) {
+		this.user = user;
+		this.transaction = transaction;
+		createdTime = LocalDateTime.now();
+		status = Status.NOT_SENT;
+	}
+
+	public long getId() {
+		return id;
+	}
+
+	public void setId(int id) {
+		this.id = id;
+	}
+
+	public User getUser() {
+		return user;
+	}
+
+	public void setUser(User user) {
+		this.user = user;
+	}
+
+	public LocalDateTime getCreatedTime() {
+		return createdTime;
+	}
+
+	public void setCreatedTime(LocalDateTime createdTime) {
+		this.createdTime = createdTime;
+	}
+
+	public LocalDateTime getSentTime() {
+		return sentTime;
+	}
+
+	public void setSentTime(LocalDateTime sentTime) {
+		this.sentTime = sentTime;
+	}
+
+	public Transaction getTransaction() {
+		return transaction;
+	}
+
+	public void setTransaction(Transaction transaction) {
+		this.transaction = transaction;
+	}
+
+	public Status getStatus() {
+		return status;
+	}
+
+	public void setStatus(Status status) {
+		this.status = status;
+	}
+
+	public void setId(long id) {
+		this.id = id;
+	}
+}

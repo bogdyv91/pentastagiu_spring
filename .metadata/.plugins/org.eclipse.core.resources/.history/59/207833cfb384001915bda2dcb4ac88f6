@@ -1,0 +1,17 @@
+package com.pentalog;
+
+import org.mockito.Mock;
+import org.springframework.beans.factory.annotation.Autowired;
+
+import com.pentalog.converter.AccountConverter;
+import com.pentalog.repository.AccountRepository;
+
+public class AccountServiceTest {
+
+	@Mock
+	AccountRepository accountRepository;
+	
+	@Mock
+	AccountConverter accountConverter;
+	
+}

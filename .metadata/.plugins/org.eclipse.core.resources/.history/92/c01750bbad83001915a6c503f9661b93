@@ -1,0 +1,12 @@
+package com.pentalog.repository;
+
+import java.util.List;
+
+import org.springframework.data.repository.Repository;
+
+import com.pentalog.model.Notification;
+
+public interface NotificationRepsitory extends Repository<Notification, Long>{
+
+	public List<Notification> findBy();
+}
