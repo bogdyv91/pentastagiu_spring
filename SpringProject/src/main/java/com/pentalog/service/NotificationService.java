@@ -50,17 +50,15 @@ public class NotificationService {
 				Optional<Person> person = personRepository.findPersonByUser(notification.getUser());
 				if (person.isPresent()) {
 					String message = emailServiceImpl.createMessage(notification);
-
 					try {
 						emailServiceImpl.sendSimpleMessage(person.get().getEmail(), "New transaction", message);
-
 						notification.setSentTime(LocalDateTime.now());
 						notification.setStatus(Status.SENT);
 
-						notificationRepsitory.save(notification);
 					} catch (MailException e) {
 						LOGGER.error("Mail could not be sent");
 					}
+					notificationRepsitory.save(notification);
 				}
 			}
 		}

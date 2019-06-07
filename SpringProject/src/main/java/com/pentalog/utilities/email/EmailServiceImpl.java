@@ -2,11 +2,11 @@ package com.pentalog.utilities.email;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.mail.SimpleMailMessage;
-import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Service;
 
 import com.pentalog.model.Notification;
 
-@Component
+@Service
 public class EmailServiceImpl {
 
 	@Autowired

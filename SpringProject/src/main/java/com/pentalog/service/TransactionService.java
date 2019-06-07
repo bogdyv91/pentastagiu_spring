@@ -94,12 +94,8 @@ public class TransactionService {
 		}
 		List<Account> accounts = accountRepository.findByUser(user);
 		List<TransactionDTO> transactionsDTO = new LinkedList<>();
-		for (Account account : accounts) {
-			List<Transaction> transactions = this.findByAccountId(account);
-			for (Transaction transaction : transactions) {
-				transactionsDTO.add(TransactionConverter.convertToTransactionDTO(transaction));
-			}
-		}
+		accounts.stream().forEach(x -> this.findByAccountId(x).stream()
+				.forEach(y -> transactionsDTO.add(TransactionConverter.convertToTransactionDTO(y))));
 		return transactionsDTO;
 	}
 }

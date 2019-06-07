@@ -69,14 +69,9 @@ public class AuthentificationService {
 	 * @param token the token whose Authentification object is deleted
 	 * @return true if found, else false
 	 */
-	public boolean delete(String token) {
+	public void delete(String token) {
 		List<Authentification> authentifications = authentificationRepository.findByToken(token);
-		if (authentifications.size() == 1) {
-			authentificationRepository.delete(authentifications.get(0));
-			return true;
-		}
-		LOGGER.info("Token not found: " + token);
-		return false;
+		authentificationRepository.delete(authentifications.get(0));
 	}
 
 	/**
@@ -90,6 +85,7 @@ public class AuthentificationService {
 		if (authentifications.size() == 1) {
 			return Optional.ofNullable(authentifications.get(0).getUser());
 		}
+		LOGGER.error("User not found by token");
 		return Optional.empty();
 	}
 }

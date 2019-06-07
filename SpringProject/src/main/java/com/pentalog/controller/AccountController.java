@@ -3,8 +3,6 @@ package com.pentalog.controller;
 import java.util.List;
 import java.util.Optional;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -17,7 +15,6 @@ import org.springframework.http.ResponseEntity;
 
 import com.pentalog.converter.AccountConverter;
 import com.pentalog.dto.AccountDTO;
-import com.pentalog.exceptions.BadTokenException;
 import com.pentalog.model.User;
 import com.pentalog.service.AccountService;
 import com.pentalog.service.AuthentificationService;
@@ -32,8 +29,6 @@ import com.pentalog.service.AuthentificationService;
 @RestController
 @RequestMapping("/account")
 public class AccountController {
-
-	private static final Logger LOGGER = LoggerFactory.getLogger(AccountController.class);
 
 	@Autowired
 	AccountService accountService;
@@ -51,16 +46,12 @@ public class AccountController {
 	 * @param token generated token for authentification table and further checks
 	 * @return list of data transfer objects of Account
 	 */
+	@SuppressWarnings("static-access")
 	@GetMapping
 	public ResponseEntity<List<AccountDTO>> showAccountsForUser(@RequestParam(value = "token") String token) {
 		Optional<User> user = authentificationService.getUserByToken(token);
-		if (user.isPresent()) {
-			List<AccountDTO> accountsDTO = accountService.getAccountsDTOForUser(user.get());
-			new ResponseEntity<List<AccountDTO>>(HttpStatus.ACCEPTED);
-			return ResponseEntity.ok(accountsDTO);
-		}
-		LOGGER.error("Incorrect token received!");
-		throw new BadTokenException("Bad token received");
+		List<AccountDTO> accountsDTO = accountService.getAccountsDTOForUser(user.get());
+		return new ResponseEntity<List<AccountDTO>>(HttpStatus.ACCEPTED).of(Optional.of(accountsDTO));
 	}
 
 	/**
@@ -74,16 +65,13 @@ public class AccountController {
 	 * @return data transfer object of created Account
 	 */
 
+	@SuppressWarnings("static-access")
 	@PostMapping(produces = "application/json", consumes = "application/json")
 	public ResponseEntity<AccountDTO> createAccount(@RequestParam(value = "token") String token,
 			@RequestBody AccountDTO accountDTO) {
 		Optional<User> user = authentificationService.getUserByToken(token);
-		if (user.isPresent()) {
-			accountService.saveAccountByDTOAndUser(accountDTO, user.get());
-			new ResponseEntity<AccountDTO>(HttpStatus.ACCEPTED);
-			return ResponseEntity.ok(accountDTO);
-		}
-		LOGGER.error("Incorrect token received!");
-		throw new BadTokenException("Bad token received");
+		accountService.saveAccountByDTOAndUser(accountDTO, user.get());
+		return new ResponseEntity<List<AccountDTO>>(HttpStatus.ACCEPTED).of(Optional.of(accountDTO));
+
 	}
 }

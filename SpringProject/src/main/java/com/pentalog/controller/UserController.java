@@ -15,9 +15,9 @@ import org.springframework.http.ResponseEntity;
 
 import com.pentalog.converter.UserConverter;
 import com.pentalog.dto.UserDTO;
-import com.pentalog.exceptions.BadTokenException;
 import com.pentalog.model.Authentification;
 import com.pentalog.model.User;
+import com.pentalog.repository.AuthentificationRepository;
 import com.pentalog.service.AuthentificationService;
 import com.pentalog.service.UserService;
 import com.pentalog.utilities.TokenGenerator;
@@ -43,6 +43,9 @@ public class UserController {
 
 	@Autowired
 	AuthentificationService authentificationService;
+
+	@Autowired
+	AuthentificationRepository authentificationRepository;
 
 	/**
 	 * Get http request used to get data data transfer object User In this method a
@@ -72,11 +75,8 @@ public class UserController {
 	 */
 	@DeleteMapping
 	public ResponseEntity<?> logout(@RequestParam String token) {
-		if (authentificationService.delete(token) == true) {
-			return ResponseEntity.status(HttpStatus.ACCEPTED).body(null);
-		}
-		LOGGER.error("Logout failed");
-		throw new BadTokenException("Invalid token received");
+		authentificationService.delete(token);
+		return ResponseEntity.status(HttpStatus.ACCEPTED).body(null);
 	}
 
 }

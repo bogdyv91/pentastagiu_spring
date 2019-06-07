@@ -20,8 +20,6 @@ public interface AuthentificationRepository extends Repository<Authentification,
 
 	public void delete(Authentification authentification);
 
-	public void deleteByToken(String token);
-
 	public List<Authentification> findByToken(String token);
 
 }

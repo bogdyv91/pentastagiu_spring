@@ -49,7 +49,6 @@ public class AuthentficationServiceTest {
 		Mockito.when(authentificationRepository.findByToken(Mockito.any())).thenReturn(test);
 		assertEquals("token in list returns Optional<User> ", authentificationService.getUserByToken("abc"),
 				Optional.ofNullable(user));
-
 	}
 
 	@Test
@@ -58,30 +57,6 @@ public class AuthentficationServiceTest {
 
 		Mockito.when(authentificationRepository.findByToken(Mockito.any())).thenReturn(test);
 		assertEquals("empty list returns null", authentificationService.getUserByToken("abc"), Optional.empty());
-
-	}
-
-	@Test
-	public void testDeleteShouldReturnFalse() {
-		List<Authentification> test = new ArrayList<>();
-
-		Mockito.when(authentificationRepository.findByToken(Mockito.any())).thenReturn(test);
-		assertEquals("empty list in delete returns false", authentificationService.delete("abc"), false);
-
-	}
-
-	@Test
-	public void testDeleteShouldReturnTrue() {
-		List<Authentification> test = new ArrayList<>();
-		Authentification authentificaton = new Authentification();
-		User user = new User();
-		authentificaton.setToken("abc");
-		authentificaton.setUser(user);
-		test.add(authentificaton);
-
-		Mockito.when(authentificationRepository.findByToken(Mockito.any())).thenReturn(test);
-		assertEquals("token in list in delete returns true", authentificationService.delete("abc"), true);
-
 	}
 
 	@Test
@@ -102,7 +77,19 @@ public class AuthentficationServiceTest {
 
 		verify(authentificationRepository).save(authentificaton);
 		verify(authentificationRepository).findByToken(Mockito.any());
+	}
 
+	@Test
+	public void testDelete() {
+		List<Authentification> test = new ArrayList<>();
+		Authentification authentificaton = new Authentification();
+		authentificaton.setToken("abc");
+		User user = new User();
+		authentificaton.setUser(user);
+		test.add(authentificaton);
+		Mockito.when(authentificationRepository.findByToken(Mockito.any())).thenReturn(test);
+		authentificationService.delete("abc");
+		verify(authentificationRepository).delete(Mockito.any());
 	}
 
 }

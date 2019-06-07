@@ -59,10 +59,7 @@ public class AccountService {
 	public List<AccountDTO> getAccountsDTOForUser(User user) {
 		List<Account> accounts = accountRepository.findByUser(user);
 		List<AccountDTO> accountsDTO = new LinkedList<AccountDTO>();
-		for (Account account : accounts) {
-			AccountDTO accountDTO = AccountConverter.convertToAccountDTO(account);
-			accountsDTO.add(accountDTO);
-		}
+		accounts.stream().forEach(x -> accountsDTO.add(AccountConverter.convertToAccountDTO(x)));
 		return accountsDTO;
 	}
 

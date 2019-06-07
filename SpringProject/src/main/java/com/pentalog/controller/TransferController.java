@@ -3,8 +3,6 @@ package com.pentalog.controller;
 import java.util.List;
 import java.util.Optional;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -17,7 +15,6 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.pentalog.converter.TransactionConverter;
 import com.pentalog.dto.TransactionDTO;
-import com.pentalog.exceptions.BadTokenException;
 import com.pentalog.model.User;
 import com.pentalog.service.AccountService;
 import com.pentalog.service.AuthentificationService;
@@ -34,8 +31,6 @@ import com.pentalog.service.TransactionService;
 @RestController
 @RequestMapping("/transfer")
 public class TransferController {
-
-	private static final Logger LOGGER = LoggerFactory.getLogger(TransferController.class);
 
 	@Autowired
 	TransactionService transactionService;
@@ -60,15 +55,12 @@ public class TransferController {
 	 * @return list of data transfer objects of data transfer object Transaction
 	 */
 
+	@SuppressWarnings("static-access")
 	@GetMapping
 	public ResponseEntity<List<TransactionDTO>> showTransactions(@RequestParam(value = "token") String token) {
 		Optional<User> user = authentificationService.getUserByToken(token);
-		if (user.isPresent()) {
-			new ResponseEntity<List<TransactionDTO>>(HttpStatus.ACCEPTED);
-			return ResponseEntity.ok(transactionService.getTransactionsByUser(user.get()));
-		}
-		LOGGER.error("Invalid token received");
-		throw new BadTokenException("Invalid token received");
+		return new ResponseEntity<List<TransactionDTO>>(HttpStatus.ACCEPTED)
+				.of(Optional.of(transactionService.getTransactionsByUser(user.get())));
 	}
 
 	/**
@@ -83,14 +75,8 @@ public class TransferController {
 	@PutMapping
 	public ResponseEntity<?> makeTransaction(@RequestParam(value = "token") String token,
 			@RequestBody TransactionDTO transaction) {
-		Optional<User> user = authentificationService.getUserByToken(token);
-		if (user.isPresent()) {
-			transactionService.makeNewTransaction(transaction);
-
-			return ResponseEntity.ok(null);
-		}
-		LOGGER.error("Invalid token received");
-		throw new BadTokenException("Invalid token received");
+		transactionService.makeNewTransaction(transaction);
+		return ResponseEntity.ok(null);
 	}
 
 }
